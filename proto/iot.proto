@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+option go_package = "./";
+
+package iot;
+
+service TemperatureService {
+  rpc RecordTemperature(RecordTemperatureRequest) returns (RecordTemperatureResponse);
+  rpc GetTemperature(GetTemperatureRequest) returns (GetTemperatureResponse);
+  rpc GetAllTemperatures(GetAllTemperaturesRequest) returns (GetAllTemperaturesResponse);
+}
+
+message RecordTemperatureRequest {
+  string sensor_id = 1;
+  double temperature = 2;
+}
+
+message RecordTemperatureResponse {
+  bool success = 1;
+}
+
+message GetTemperatureRequest {
+  string sensor_id = 1;
+}
+
+message GetTemperatureResponse {
+  double temperature = 1;
+  bool found = 2;
+}
+
+message GetAllTemperaturesRequest {}
+
+message GetAllTemperaturesResponse {
+  repeated SensorTemperature sensors = 1;
+}
+
+message SensorTemperature {
+  string sensor_id = 1;
+  double temperature = 2;
+}
