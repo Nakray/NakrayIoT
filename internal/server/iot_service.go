@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"log"
 
 	"github.com/go-redis/redis/v8"
 
@@ -23,6 +24,7 @@ func (s *TemperatureService) RecordTemperature(ctx context.Context, req *tempPb.
 
 	err := s.redisClient.Set(ctx, key, temperature, 0).Err()
 	if err != nil {
+		log.Fatalf("Failed to record to Redis: %v", err)
 		return nil, err
 	}
 
@@ -41,6 +43,7 @@ func (s *TemperatureService) GetTemperature(ctx context.Context, req *tempPb.Get
 	if err == redis.Nil {
 		return &tempPb.GetTemperatureResponse{Found: false}, nil
 	} else if err != nil {
+		log.Fatalf("Failed to search in Redis: %v", err)
 		return nil, err
 	}
 	return &tempPb.GetTemperatureResponse{Temperature: temperature, Found: true}, nil
@@ -58,8 +61,9 @@ func (s *TemperatureService) GetAllTemperatures(ctx context.Context, req *tempPb
 
 		temperature, err := s.redisClient.Get(ctx, key).Float64()
 		if err == redis.Nil {
-			continue // Если температура для датчика отсутствует, пропускаем.
+			continue
 		} else if err != nil {
+			log.Fatalf("Failed to search in Redis: %v", err)
 			return nil, err
 		}
 

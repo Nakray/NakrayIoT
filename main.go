@@ -15,6 +15,7 @@ import (
 )
 
 func main() {
+	log.SetOutput(os.Stderr)
 	redisClient := redis.NewRedisClient(os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT"))
 	defer redisClient.Close()
 
